@@ -74,6 +74,7 @@ public class Fraction extends Number {
      * Initializes object by using given value, multiplied by {@link #NUMBER_DEFAULT_DENOMINATOR} as numerator and {@link #NUMBER_DEFAULT_DENOMINATOR} as denominator
      * 
      * @param def given value, represented by any child of Number class
+     * @throws ArithmeticException if denominator equals zero
      */
     public Fraction(Number def) {
         this((int)(def.doubleValue() * NUMBER_DEFAULT_DENOMINATOR), NUMBER_DEFAULT_DENOMINATOR);

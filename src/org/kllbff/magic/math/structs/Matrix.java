@@ -2,6 +2,34 @@ package org.kllbff.magic.math.structs;
 
 import java.util.Arrays;
 
+/**
+ * <h3>Represents double values matrix</h3>
+ * <p>Matrix - is a group of numbers, placed into table with fixed width and height. This implentation uses array of arrays of double values to store given numbers</p>
+ * <p>If you need to get maximum accuracy - use {@link FractionsMatrix}. This matrix much faster, but is highly inaccurate when working with fractions, 
+ *    such as {@link org.kllbff.magic.math.algothms.GaussAlgorithm Gauss} and {@link org.kllbff.magic.math.algothms.KramerAlgorithm Kramer} algorithms</p>
+ * <p>Matrix has basic methods:
+ *     <ul>
+ *          <li>getters {@link #get(int, int)} and setters {@link #set(int, int, double)} for each cell</li>
+ *          <li>{@link #getMinorFor(int, int)} - for calculating addition minor for specified cell</li>
+ *          <li>{@link #getDeterminant()} - for calculating matrix's determinant</li>
+ *     </ul>
+ *     and some specific methods that facilitate the work with matrix:
+ *     <ul>
+ *          <li>{@link #strikeOutColumn(int)}</li>
+ *          <li>{@link #strikeOutRow(int)}</li>
+ *          <li>{@link #addColumn(double...)}</li>
+ *          <li>{@link #addColumns(int)}</li>
+ *          <li>{@link #addRow(double...)}</li>
+ *          <li>{@link #addRows(int)}</li>
+ *          <li>{@link #insertColumn(int, double...)}</li>
+ *          <li>{@link #insertRow(int, double...)}</li>
+ *     </ul>
+ * </p>
+ * 
+ * @author Kirill Bogatikov
+ * @since 1.0
+ * @version 1.0
+ */
 public class Matrix {
     public double[][] mx;
     private int width, height;
@@ -37,6 +65,37 @@ public class Matrix {
         if(x == width) {
             x = 0;
             y++;
+        }
+        return this;
+    }
+    
+    public Matrix insertRow(int y, double... row) {
+        if(mx[0].length == height) {
+            addRows(1);
+        } else {
+            height++;
+        }
+        
+        for(int i = height - 1; i > y; i--) {
+            for(int j = 0; j < width; j++) {
+                mx[j][i] = mx[j][i - 1];
+            }
+        }
+        for(int i = 0; i < width; i++) {
+            mx[i][y] = row[i];
+        }
+        return this;
+    }
+    
+    public Matrix insertColumn(int x, double... column) {
+        if(mx.length == width) {
+            addColumns(1);
+        } else {
+            width++;
+        }
+        
+        for(int y = 0; y < height; y++) {
+            mx[x][y] = column[y];
         }
         return this;
     }

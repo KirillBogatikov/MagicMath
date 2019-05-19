@@ -1,150 +1,44 @@
 package org.kllbff.magic.math.structs;
 
-import java.util.Arrays;
+/**
+ * <h3>Represents double values matrix</h3>
+ * <p>Matrix - is a group of numbers, placed into table with fixed width and height. This implentation uses array of arrays of Fraction objects to store given numbers</p>
+ * <p>If you need to get maximum speed - use {@link Matrix}. This matrix much accuracy, but is highly slowly. However, it is optimal solution for some algorithms,
+ *    such as {@link org.kllbff.magic.math.algothms.GaussAlgorithm Gauss} and {@link org.kllbff.magic.math.algothms.KramerAlgorithm Kramer} algorithms</p>
+ * <p>FractionsMatrix has basic methods:
+ *     <ul>
+ *          <li>getters {@link #get(int, int)} and setters {@link #set(int, int, Fraction)} for each cell</li>
+ *          <li>{@link #getMinorFor(int, int)} - for calculating addition minor for specified cell</li>
+ *          <li>{@link #getDeterminant()} - for calculating matrix's determinant</li>
+ *     </ul>
+ *     and some specific methods that facilitate the work with matrix:
+ *     <ul>
+ *          <li>{@link #strikeOutColumn(int)}</li>
+ *          <li>{@link #strikeOutRow(int)}</li>
+ *          <li>{@link #addColumns(int)}</li>
+ *          <li>{@link #addRows(int)}</li>
+ *          <li>{@link #insertColumn(int, Fraction...)}</li>
+ *          <li>{@link #insertRow(int, Fraction...)}</li>
+ *     </ul>
+ * 
+ * @author Kirill Bogatikov
+ * @since 1.0
+ * @version 1.0
+ */
+public class FractionsMatrix extends Matrix<Fraction> {
 
-public class FractionsMatrix {
-    public Fraction[][] mx;
-    private int width, height;
-    private int x, y;
-    
+    /**
+     * Initializes matrix with specified width and height
+     * 
+     * @param width width of matrix
+     * @param height height of matrix
+     * @throws RuntimeException if width or height less than 1
+     */
     public FractionsMatrix(int width, int height) {
-        if(width < 1) {
-            throw new RuntimeException("Matrix's width cann't be less than 1 (given " + width + ")");
-        }
-        if(height < 1) {
-            throw new RuntimeException("Matrix's height cann't be less than 1 (given " + height + ")");
-        }
-        
-        mx = new Fraction[width][height];
-        
-        this.width = width;
-        this.height = height;
-        this.x = 0;
-        this.y = 0;
+        super(width, height);
     }
     
-    public Fraction get(int x, int y) {
-        return mx[x][y];
-    }
-    
-    public FractionsMatrix set(int x, int y, Fraction val) {
-        mx[x][y] = val;
-        return this;
-    }
-    
-    public FractionsMatrix add(Fraction val) {
-        this.mx[x++][y] = val;
-        if(x == width) {
-            x = 0;
-            y++;
-        }
-        return this;
-    }
-    
-    public FractionsMatrix insertRow(int y, Fraction... row) {
-        if(mx[0].length == height) {
-            addRows(1);
-        } else {
-            height++;
-        }
-        
-        for(int i = height - 1; i > y; i--) {
-            for(int j = 0; j < width; j++) {
-                mx[j][i] = mx[j][i - 1];
-            }
-        }
-        for(int i = 0; i < width; i++) {
-            mx[i][y] = row[i];
-        }
-        return this;
-    }
-    
-    public FractionsMatrix insertColumn(int x, Fraction... column) {
-        if(mx.length == width) {
-            addColumns(1);
-        } else {
-            width++;
-        }
-        
-        for(int y = 0; y < height; y++) {
-            mx[x][y] = column[y];
-        }
-        return this;
-    }
-    
-    public Fraction[] getRow(int y) {
-        Fraction[] row = new Fraction[width];
-        for(int i = 0; i < width; i++) {
-            row[i] = mx[i][y];
-        }
-        return row;
-    }
-    
-    public FractionsMatrix addColumns(int count) {
-        mx = Arrays.copyOf(mx, width + count);
-        for(int x = 0; x < count; x++) {
-            mx[x + width] = new Fraction[height];
-        }
-        width += count;
-        return this;
-    }
-    
-    public FractionsMatrix addRows(int count) {
-        height += count;
-        for(int i = 0; i < width; i++) {
-            mx[i] = Arrays.copyOf(mx[i], height);
-        }
-        return this;
-    }
-    
-    public FractionsMatrix addColumn(Fraction[] values) {
-        addColumns(1);
-        int count = Math.min(height, values.length);
-        mx[width - 1] = Arrays.copyOf(values, count);
-        return this;
-    }
-    
-    public FractionsMatrix addRow(Fraction[] values) {
-        addRows(1);
-        int count = Math.min(width, values.length);
-        for(int i = 0; i < count; i++) {
-            mx[i][height - 1] = values[i];
-        }
-        return this;
-    }
-    
-    public Fraction getDeterminant() {
-        if(width != height) {
-            throw new RuntimeException("Cannot calculate determinant of non-square matrix (" + width + "x" + height + ")");
-        }
-        
-        if(width == 2) {
-            return mx[0][0].mul(mx[1][1]).sub(mx[0][1].mul(mx[1][0]));
-        }
-        
-        if(width == 3) {
-            return mx[0][0].mul(mx[1][1]).mul(mx[2][2]).sum( 
-                   mx[0][2].mul(mx[1][0]).mul(mx[2][1])).sum( 
-                   mx[0][1].mul(mx[1][2]).mul(mx[2][0])).sub(
-                   mx[0][2].mul(mx[1][1]).mul(mx[2][0])).sub(
-                   mx[0][0].mul(mx[2][1]).mul(mx[1][2])).sub(
-                   mx[1][0].mul(mx[0][1]).mul(mx[2][2]));
-        }
-        
-        Fraction determ = new Fraction();
-        int k;
-        for(int i = 0; i < width; i++) {
-            if(i % 2 == 0) {
-                k = -1;
-            } else {
-                k = 1;
-            }
-            determ = determ.sum(mx[i][0].mul(new Fraction(k)).mul(getMinorFor(i, 1))); 
-        }
-        
-        return determ;
-    }
-    
+    @Override
     public FractionsMatrix copy() {
         FractionsMatrix copy = new FractionsMatrix(width, height);
         for(int x = 0; x < width; x++) {
@@ -155,38 +49,41 @@ public class FractionsMatrix {
         return copy;
     }
     
-    public FractionsMatrix strikeOutColumn(int column) {
-        for(int i = column; i < width - 1; i++) {
-            mx[i] = mx[i + 1];
+    /**
+     * Returns matrix's determinant
+     * <p>This implemention optimized to work with Fractions: more accuracy, but more slowly</p>
+     * See {@link Matrix#getDeterminant()} for more details
+     */
+    @Override
+    public Fraction getDeterminant() {
+        if(width != height) {
+            throw new RuntimeException("Cannot calculate determinant of non-square matrix (" + width + "x" + height + ")");
         }
-        width--;
-        return this;
-    }
-    
-    public FractionsMatrix strikeOutRow(int row) {
-        for(int x = 0; x < width; x++) {
-            for(int y = row; y < height - 1; y++) {
-                mx[x][y] = mx[x][y + 1];
+        
+        if(width == 2) {
+            return get(0, 0).mul(get(1, 1)).sub(get(0, 1).mul(get(1, 0)));
+        }
+        
+        if(width == 3) {
+            return get(0, 0).mul(get(1, 1)).mul(get(2, 2)).sum( 
+                   get(0, 2).mul(get(1, 0)).mul(get(2, 1))).sum( 
+                   get(0, 1).mul(get(1, 2)).mul(get(2, 0))).sub(
+                   get(0, 2).mul(get(1, 1)).mul(get(2, 0))).sub(
+                   get(0, 0).mul(get(2, 1)).mul(get(1, 2))).sub(
+                   get(1, 0).mul(get(0, 1)).mul(get(2, 2)));
+        }
+        
+        Fraction determ = new Fraction();
+        int k;
+        for(int i = 0; i < width; i++) {
+            if(i % 2 == 0) {
+                k = -1;
+            } else {
+                k = 1;
             }
+            determ = determ.sum(get(i, 0).mul(new Fraction(k)).mul((Fraction)getMinorFor(i, 1))); 
         }
-        height--;
-        return this;
-    }
-    
-    public Fraction getMinorFor(int x, int y) {
-        FractionsMatrix mtx = copy();
-        mtx.strikeOutColumn(x).strikeOutRow(y);
-        return mtx.getDeterminant();
-    }
-    
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        for(int y = 0; y < height; y++) {
-            for(int x = 0; x < width - 1; x++) {
-                builder.append(mx[x][y]).append(" ");
-            }
-            builder.append(mx[width - 1][y]).append("\n");
-        }
-        return builder.toString();
+        
+        return determ;
     }
 }

@@ -1,6 +1,8 @@
 package org.kllbff.magic.math.structs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * <h3>Represents double values matrix</h3>
@@ -9,9 +11,10 @@ import java.util.Arrays;
  *    such as {@link org.kllbff.magic.math.algothms.GaussAlgorithm Gauss} and {@link org.kllbff.magic.math.algothms.KramerAlgorithm Kramer} algorithms</p>
  * <p>Matrix has basic methods:
  *     <ul>
- *          <li>getters {@link #get(int, int)} and setters {@link #set(int, int, double)} for each cell</li>
+ *          <li>getters {@link #get(int, int)} and setters {@link #set(int, int, Number)} for each cell</li>
  *          <li>{@link #getMinorFor(int, int)} - for calculating addition minor for specified cell</li>
  *          <li>{@link #getDeterminant()} - for calculating matrix's determinant</li>
+ *          <li>getters for width and height</li>
  *     </ul>
  *     and some specific methods that facilitate the work with matrix:
  *     <ul>
@@ -19,18 +22,19 @@ import java.util.Arrays;
  *          <li>{@link #strikeOutRow(int)}</li>
  *          <li>{@link #addColumns(int)}</li>
  *          <li>{@link #addRows(int)}</li>
- *          <li>{@link #insertColumn(int, double...)}</li>
- *          <li>{@link #insertRow(int, double...)}</li>
+ *          <li>{@link #insertColumn(int, E...)}</li>
+ *          <li>{@link #insertRow(int, E...)}</li>
  *     </ul>
  * 
+ * @param <E> a child of Number class, used as one cell value
  * @author Kirill Bogatikov
  * @since 1.0
  * @version 1.0
  */
-public class Matrix {
-    public double[][] mx;
-    private int width, height;
-    private int x, y;
+public class Matrix<E extends Number> {
+    protected Number[][] mx;
+    protected int width, height;
+    protected int x, y;
     
     /**
      * Initializes matrix with specified width and height
@@ -47,12 +51,60 @@ public class Matrix {
             throw new RuntimeException("Matrix's height cann't be less than 1 (given " + height + ")");
         }
         
-        mx = new double[width][height];
+        mx = new Number[width][height];
         
         this.width = width;
         this.height = height;
         this.x = 0;
         this.y = 0;
+    }
+    
+    /**
+     * Returns current matrix's width
+     * 
+     * @return current matrix's width
+     */
+    public int getWidth() {
+        return width;
+    }
+    
+    /**
+     * Returns current matrix's height
+     * 
+     * @return current matrix's height
+     */
+    public int getHeight() {
+        return height;
+    }
+    
+    /**
+     * Returns one row from matrix in List<E>
+     * 
+     * @param y index of row 
+     * @return one row from matrix in List<E>
+     */
+    @SuppressWarnings("unchecked")
+    public List<E> getRow(int y) {
+        ArrayList<E> row = new ArrayList<E>();
+        for(int x = 0; x < width; x++) {
+            row.add((E)mx[x][y]);
+        }
+        return row;
+    }
+    
+    /**
+     * Returns one column from matrix in List<E>
+     * 
+     * @param x index of column 
+     * @return one column from matrix in List<E>
+     */
+    @SuppressWarnings("unchecked")
+    public List<E> getColumn(int x) {
+        ArrayList<E> row = new ArrayList<E>();
+        for(int y = 0; y < height; y++) {
+            row.add((E)mx[x][y]);
+        }
+        return row;
     }
     
     /**
@@ -62,8 +114,9 @@ public class Matrix {
      * @param y row of cell
      * @return value stored in specified cell
      */
-    public double get(int x, int y) {
-        return mx[x][y];
+    @SuppressWarnings("unchecked")
+    public E get(int x, int y) {
+        return (E)mx[x][y];
     }
     
     /**
@@ -74,7 +127,7 @@ public class Matrix {
      * @param val new value
      * @return pointer to this Matrix
      */
-    public Matrix set(int x, int y, double val) {
+    public Matrix<E> set(int x, int y, E val) {
         mx[x][y] = val;
         return this;
     }
@@ -89,7 +142,7 @@ public class Matrix {
      * @param val value for cell
      * @return pointer to this Matrix
      */
-    public Matrix add(double val) {
+    public Matrix<E> add(E val) {
         this.mx[x++][y] = val;
         if(x == width) {
             x = 0;
@@ -106,7 +159,8 @@ public class Matrix {
      * @param row values for new row
      * @return pointer to this Matrix
      */
-    public Matrix insertRow(int y, double... row) {
+    @SuppressWarnings("unchecked")
+    public Matrix<E> insertRow(int y, E... row) {
         if(mx[0].length == height) {
             addRows(1);
         } else {
@@ -128,12 +182,12 @@ public class Matrix {
      * Insert specified value to column at specified position
      * <p>This method does not rewrite values in specified column. It shifts all next columns by 1 and sets free column by given values</p>
      * 
-     * 
      * @param x target column index
      * @param column values for new column
      * @return pointer to this Matrix
      */
-    public Matrix insertColumn(int x, double... column) {
+    @SuppressWarnings("unchecked")
+    public Matrix<E> insertColumn(int x, E... column) {
         if(mx.length == width) {
             addColumns(1);
         } else {
@@ -152,7 +206,7 @@ public class Matrix {
      * @param count count of new columns
      * @return pointer to this Matrix
      */
-    public Matrix addColumns(int count) {
+    public Matrix<E> addColumns(int count) {
         width += count;
         mx = Arrays.copyOf(mx, width);
         return this;
@@ -164,7 +218,7 @@ public class Matrix {
      * @param count count of new rows
      * @return pointer to this Matrix
      */
-    public Matrix addRows(int count) {
+    public Matrix<E> addRows(int count) {
         height += count;
         for(int i = 0; i < width; i++) {
             mx[i] = Arrays.copyOf(mx[i], height);
@@ -186,22 +240,22 @@ public class Matrix {
      * </p>
      * @return determinant of this matrix
      */
-    public double getDeterminant() {
+    public Number getDeterminant() {
         if(width != height) {
             throw new RuntimeException("Cannot calculate determinant of non-square matrix (" + width + "x" + height + ")");
         }
         
         if(width == 2) {
-            return mx[0][0] * mx[1][1] - mx[0][1] * mx[1][0];
+            return mx[0][0].doubleValue() * mx[1][1].doubleValue() - mx[0][1].doubleValue() * mx[1][0].doubleValue();
         }
         
         if(width == 3) {
-            return mx[0][0] * mx[1][1] * mx[2][2] + 
-                   mx[0][2] * mx[1][0] * mx[2][1] + 
-                   mx[0][1] * mx[1][2] * mx[2][0] -
-                   mx[0][2] * mx[1][1] * mx[2][0] -
-                   mx[0][0] * mx[2][1] * mx[1][2] -
-                   mx[1][0] * mx[0][1] * mx[2][2];
+            return mx[0][0].doubleValue() * mx[1][1].doubleValue() * mx[2][2].doubleValue() + 
+                   mx[0][2].doubleValue() * mx[1][0].doubleValue() * mx[2][1].doubleValue() + 
+                   mx[0][1].doubleValue() * mx[1][2].doubleValue() * mx[2][0].doubleValue() -
+                   mx[0][2].doubleValue() * mx[1][1].doubleValue() * mx[2][0].doubleValue() -
+                   mx[0][0].doubleValue() * mx[2][1].doubleValue() * mx[1][2].doubleValue() -
+                   mx[1][0].doubleValue() * mx[0][1].doubleValue() * mx[2][2].doubleValue();
         }
         
         double determ = 0.0, k;
@@ -211,7 +265,7 @@ public class Matrix {
             } else {
                 k = 1;
             }
-            determ += k * mx[i][0] * getMinorFor(i, 1); 
+            determ += k * mx[i][0].doubleValue() * getMinorFor(i, 1).doubleValue(); 
         }
         
         return determ;
@@ -222,8 +276,8 @@ public class Matrix {
      * 
      * @return a new instance of Matrix, containing all values from this matrix
      */
-    public Matrix copy() {
-        Matrix copy = new Matrix(width, height);
+    public Matrix<E> copy() {
+        Matrix<E> copy = new Matrix<E>(width, height);
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
                 copy.mx[x][y] = mx[x][y];
@@ -239,7 +293,7 @@ public class Matrix {
      * @param column index of deleting column
      * @return pointer to this Matrix
      */
-    public Matrix strikeOutColumn(int column) {
+    public Matrix<E> strikeOutColumn(int column) {
         for(int i = column; i < width - 1; i++) {
             mx[i] = mx[i + 1];
         }
@@ -254,7 +308,7 @@ public class Matrix {
      * @param row index of deleting row
      * @return pointer to this Matrix
      */
-    public Matrix strikeOutRow(int row) {
+    public Matrix<E> strikeOutRow(int row) {
         for(int x = 0; x < width; x++) {
             for(int y = row; y < height - 1; y++) {
                 mx[x][y] = mx[x][y + 1];
@@ -272,12 +326,26 @@ public class Matrix {
      * @param y row of specified cell
      * @return return determinant of 
      */
-    public double getMinorFor(int x, int y) {
-        Matrix mtx = copy();
+    public Number getMinorFor(int x, int y) {
+        Matrix<E> mtx = copy();
         mtx.strikeOutColumn(x).strikeOutRow(y);
         return mtx.getDeterminant();
     }
     
+    @Override
+    public int hashCode() {
+        return 128 + Arrays.deepHashCode(mx);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Matrix<?> other = (Matrix<?>) obj;
+        return Arrays.deepEquals(mx, other.mx);
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for(int y = 0; y < height; y++) {

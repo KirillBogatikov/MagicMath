@@ -11,7 +11,7 @@ import org.kllbff.magic.math.VarargsMath;
  *          <li>{@link #doubleValue()} returns a decimal representation of fraction;</li>
  *          <li>{@link #floatValue()} returns a decimal represetation of fraction by 32-bit <code>float</code> value;</li>
  *          <li>{@link #longValue()} returns a whole part of fraction - result of integer division numerator on denominator - by 64-bit <code>long</code> value;</li>
- *     </ul><br />
+ *     </ul><br>
  *     but has some own methods:
  *     <ul>
  *          <li>{@link #sum(Fraction)} returns a new instance of Fraction, respresenting sum of two fractions - this and specified;</li>
@@ -22,7 +22,7 @@ import org.kllbff.magic.math.VarargsMath;
  *          <li>{@link #reduce()} reduces this fraction;</li>
  *          <li>{@link #reverse()} returns an inverted fraction, created by change of numerator and denominator in places.</li>
  *     </ul>
- * </p>
+ * 
  * 
  * @author Kirill Bogatikov
  * @version 1.0
@@ -61,7 +61,7 @@ public class Fraction extends Number {
      *      * f now equals 5/1
      *      *&#47;
      * </code></pre>
-     * </p>
+     * 
      * 
      * @param i given whole <code>long</code> value
      * @throws ArithmeticException if denominator equals zero
@@ -71,7 +71,7 @@ public class Fraction extends Number {
     }
     
     /**
-     * Initializes object by using given value, multiplied by {@link #NUMBER_DEFAULT_DENOMINATOR} as numerator and {@link NUMBER_DEFAULT_DENOMINATOR} as denominator
+     * Initializes object by using given value, multiplied by {@link #NUMBER_DEFAULT_DENOMINATOR} as numerator and {@link #NUMBER_DEFAULT_DENOMINATOR} as denominator
      * 
      * @param def given value, represented by any child of Number class
      */
@@ -89,11 +89,11 @@ public class Fraction extends Number {
     /**
      * Reduces this fraction by dividing <i>numerator</i> and <i>denominator</i> on equal numbers
      * <p>
-     *     This method calculates the <b>GCD</b> - <i>greates common divisor</i> of two values - fraction's numerator and denominator. GCD calculated by {@link VarargsMath#gcd(long, long)}<br />
+     *     This method calculates the <b>GCD</b> - <i>greates common divisor</i> of two values - fraction's numerator and denominator. GCD calculated by {@link VarargsMath#gcd(long, long)}<br>
      *     Then numerator and denominator divides on GCD value and saves into object 
      * </p> 
      * <p>
-     *     This method called automatically only at constructor on initializing fraction, because calculating GCD is slow and resource-intensive operation.<br />
+     *     This method called automatically only at constructor on initializing fraction, because calculating GCD is slow and resource-intensive operation.<br>
      *     But it is recommended to call this method manually after every operations over this fraction and other BIG or unknown size fraction
      * </p>
      */
@@ -117,7 +117,7 @@ public class Fraction extends Number {
     /**
      * Sets a new value for <i>denominator</i>
      * 
-     * @param n new denominator value
+     * @param d new denominator value
      */
     public void setDenominator(long d) {
         this.d = d;
@@ -179,13 +179,11 @@ public class Fraction extends Number {
     
     /**
      * Calculates a quotient of this fraction and specified fraction by multipling this fraction on inverted other
-     * <p>Example:
-     * <pre><code>
+     * <p>Example:<pre><code>
      *     1   3   1   4   4
      *     - / - = - * - = -
      *     2   4   2   3   6
-     * </code></pre>    
-     * </p>
+     * </code></pre>
      * 
      * @param other specified fraction
      * @return a quotient of this fraction and specified fraction by multipling this fraction on inverted other
@@ -197,7 +195,7 @@ public class Fraction extends Number {
     /**
      * Returns inverted version of this fraction as new instance of Fraction
      * <p>
-     *     Fraction A is the inverted version of the fraction if the numerator And B is denominator, and the denominator And the numerator B
+     *     Fraction A is the inverted version of the fraction B if the numerator A is denominator B, and the denominator A is the numerator B
      * </p>
      * @return inverted version of this fraction as new instance of Fraction
      */
@@ -243,7 +241,6 @@ public class Fraction extends Number {
      *     A string representation builded for maximal human-readable format:
      *     &#60;whole part&#62;(&#60;numerator&#62;/&#60;denominator&#62;).
      * </p>
-     * <p>
      * <dl>
      *     <dt>Whole part</dt>
      *     <dd>A whole part calculated by dividing numerator on denominator. If whole equals zero, it does not added to String</dd>
@@ -252,9 +249,8 @@ public class Fraction extends Number {
      *         result of subtraction whole part from numerator</dd>
      *      <dt>Denominator</dt>
      *      <dd>Always fraction's denomintor without changed</dd>
-     * </p>
-     * <p>
-     * Example:
+     * </dl>
+     * <p>Example:
      * <pre><code>
      *     Fraction a = new Fraction(10, 5);
      *     String a_s = a.toString(); //contains "2"
@@ -265,7 +261,6 @@ public class Fraction extends Number {
      *     Fraction c = new Fraction(1, 3);
      *     String c_s = c.toString(); //contains "1/3"
      * </code></pre>
-     * </p>
      */
     @Override
     public String toString() {

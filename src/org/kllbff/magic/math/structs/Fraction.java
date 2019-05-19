@@ -286,4 +286,21 @@ public class Fraction extends Number {
         }
         return r.toString();
     }
+    
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 31 * result + (int) (d ^ (d >>> 32));
+        result = 31 * result + (int) (n ^ (n >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Fraction other = (Fraction) obj;
+        return d != other.d || n != other.n;
+    }
 }

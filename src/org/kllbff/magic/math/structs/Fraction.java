@@ -34,6 +34,23 @@ public class Fraction extends Number {
     private long n, d;
     
     /**
+     * Returns instance of Fraction, created by given Number instance
+     * <p>
+     * If given number already is instance of Fraction class, method will return casted to Fraction class.<br>
+     * In all other cases, it returns a new instance of Fraction class, created with {@link #Fraction(long)} by {@link Number#longValue()}
+     * </p>
+     * 
+     * @param number any instance of Number class (and it's childs)
+     * @return instance of Fraction, created by given Number instance
+     */
+    public static Fraction create(Number number) {
+        if(number instanceof Fraction) {
+            return (Fraction)number;
+        }
+        return new Fraction(number.longValue());
+    }
+    
+    /**
      * Initializes object by given values for numerator and denominator
      * 
      * @param n numerator value
@@ -68,16 +85,6 @@ public class Fraction extends Number {
      */
     public Fraction(long i) {
         this(i, 1);
-    }
-    
-    /**
-     * Initializes object by using given value, multiplied by {@link #NUMBER_DEFAULT_DENOMINATOR} as numerator and {@link #NUMBER_DEFAULT_DENOMINATOR} as denominator
-     * 
-     * @param def given value, represented by any child of Number class
-     * @throws ArithmeticException if denominator equals zero
-     */
-    public Fraction(Number def) {
-        this((int)(def.doubleValue() * NUMBER_DEFAULT_DENOMINATOR), NUMBER_DEFAULT_DENOMINATOR);
     }
     
     /**
@@ -233,7 +240,7 @@ public class Fraction extends Number {
      */
     @Override
     public double doubleValue() {
-        return ((double)n) / d;
+        return ((double)n) / (double)d;
     }
 
     /**

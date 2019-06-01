@@ -14,18 +14,10 @@ public class GaussAlgorithm {
         this.capacity = capacity;
     }
     
-    public void add(Fraction... values) {
-        for(Fraction f : values) {
+    public void add(double... values) {
+        for(double f : values) {
             matrix.add(f);
         }
-    }
-    
-    public void add(double... numbers) {
-        Fraction[] fractions = new Fraction[capacity];
-        for(int i = 0; i < capacity; i++) {
-            fractions[i] = new Fraction(numbers[i]);
-        }
-        add(fractions);
     }
     
     private void moveNonZeroRow(int offset) {
@@ -39,8 +31,17 @@ public class GaussAlgorithm {
         matrix.strikeOutRow(i).insertRow(offset, rowA.toArray(new Fraction[0]));
     }
     
-    public Fraction[] solve(Fraction... free) {
-        matrix.insertColumn(capacity, free);
+    public double[] solve(Number... freeNumbers) {
+        if(freeNumbers.length < capacity) {
+            throw new RuntimeException("Free column has not enough items: " + freeNumbers.length + ", " + capacity + " need");
+        }
+        
+        Fraction[] fractions = new Fraction[capacity];
+        for(int i = 0; i < capacity; i++) {
+            fractions[i] = Fraction.create(freeNumbers[i]);
+        }
+        
+        matrix.insertColumn(capacity, fractions);
         for(int e = 0; e < capacity - 1; e++) {
             moveNonZeroRow(e);
             
@@ -56,24 +57,20 @@ public class GaussAlgorithm {
             }
         }
         
-        Fraction[] result = new Fraction[capacity];
-        result[capacity - 1] = matrix.get(capacity, capacity - 1).div(matrix.get(capacity - 1, capacity - 1));
+        Fraction[] unknowns = new Fraction[capacity];
+        unknowns[capacity - 1] = matrix.get(capacity, capacity - 1).div(matrix.get(capacity - 1, capacity - 1));
         for(int i = capacity - 1; i > -1; i--) {
             Fraction f = new Fraction(0);
-            for(int j = 2; j > i; j--) {
-                f = f.sum(result[j].mul(matrix.get(j, i)));
+            for(int j = capacity - 1; j > i; j--) {
+                f = f.sum(unknowns[j].mul(matrix.get(j, i)));
             }
-            result[i] = matrix.get(capacity, i).sub(f).div(matrix.get(i, i));
+            unknowns[i] = matrix.get(capacity, i).sub(f).div(matrix.get(i, i));
         }
         
-        return result;
-    }
-    
-    public Fraction[] solve(double... free) {
-        Fraction[] fractions = new Fraction[capacity];
-        for(int i = 0; i < capacity; i++) {
-            fractions[i] = new Fraction(free[i]);
+        double[] result = new double[capacity];
+        for(int i = 0; i < unknowns.length; i++) {
+            result[i] = unknowns[i].doubleValue();
         }
-        return solve(fractions);
+        return result;
     }
 }

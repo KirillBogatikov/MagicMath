@@ -47,6 +47,11 @@ public class Fraction extends Number {
         if(number instanceof Fraction) {
             return (Fraction)number;
         }
+        if(number instanceof Double || number instanceof Float) {
+            if(number.longValue() != number.doubleValue()) {
+                return new Fraction((long)(number.doubleValue() * 100_000_000), 100_000_000L);
+            }
+        }
         return new Fraction(number.longValue());
     }
     

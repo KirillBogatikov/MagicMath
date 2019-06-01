@@ -49,6 +49,16 @@ public class FractionsMatrix extends Matrix<Fraction> {
         return copy;
     }
     
+    public FractionsMatrix add(double value) {
+        super.add(Fraction.create(value));
+        return this;
+    }
+    
+    public FractionsMatrix set(int x, int y, double value) {
+        super.set(x, y, Fraction.create(value));
+        return this;
+    }
+    
     /**
      * Returns matrix's determinant
      * <p>This implemention optimized to work with Fractions: more accuracy, but more slowly</p>

@@ -1,50 +1,37 @@
 package org.kllbff.magic.math.algothms;
 
-import org.kllbff.magic.math.structs.Fraction;
-import org.kllbff.magic.math.structs.FractionsMatrix;
+import org.kllbff.magic.math.structs.Matrix;
 
 public class KramerAlgorithm {
     private int capacity;
-    private FractionsMatrix matrix;
+    private Matrix<Double> matrix;
     
     public KramerAlgorithm(int capacity) {
+        if(capacity < 2) {
+            throw new RuntimeException("Equations system must have at least two equations");
+        }
+        
         this.capacity = capacity;
-        this.matrix = new FractionsMatrix(capacity, capacity);
+        this.matrix = new Matrix<Double>(capacity, capacity);
     }
     
-    public void add(Fraction... values) {
-        for(Fraction v : values) {
+    public void add(double... values) {
+        for(double v : values) {
             matrix.add(v);
         }
     }
     
-    public void add(double... numbers) {
-        Fraction[] fractions = new Fraction[capacity];
+    public double[] solve(Double... free) {
+        double[] values = new double[capacity];
+        Number D = matrix.getDeterminant();
         for(int i = 0; i < capacity; i++) {
-            fractions[i] = new Fraction(numbers[i]);
-        }
-        add(fractions);
-    }
-    
-    public Fraction[] solve(Fraction... free) {
-        Fraction[] values = new Fraction[capacity];
-        Fraction D = matrix.getDeterminant();
-        for(int i = 0; i < capacity; i++) {
-            FractionsMatrix c = matrix.copy();
+            Matrix<Double> c = matrix.copy();
             for(int j = 0; j < capacity; j++) {
                 c.set(i, j, free[j]);
             }            
-            Fraction d = c.getDeterminant();
-            values[i] = d.div(D);
+            Number d = c.getDeterminant();
+            values[i] = d.doubleValue() / D.doubleValue();
         }
         return values;
-    }
-    
-    public Fraction[] solve(double... free) {
-        Fraction[] fractions = new Fraction[capacity];
-        for(int i = 0; i < capacity; i++) {
-            fractions[i] = new Fraction(free[i]);
-        }
-        return solve(fractions);
     }
 }

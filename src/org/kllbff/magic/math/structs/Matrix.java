@@ -207,8 +207,11 @@ public class Matrix<E extends Number> {
      * @return pointer to this Matrix
      */
     public Matrix<E> addColumns(int count) {
+        mx = Arrays.copyOf(mx, width + count);
+        for(int i = 0; i < count; i++) {
+            mx[width + i] = new Number[height];
+        }
         width += count;
-        mx = Arrays.copyOf(mx, width);
         return this;
     }
     
@@ -248,6 +251,8 @@ public class Matrix<E extends Number> {
         if(width == 2) {
             return mx[0][0].doubleValue() * mx[1][1].doubleValue() - mx[0][1].doubleValue() * mx[1][0].doubleValue();
         }
+        
+        System.err.println(mx[2][0]);
         
         if(width == 3) {
             return mx[0][0].doubleValue() * mx[1][1].doubleValue() * mx[2][2].doubleValue() + 

@@ -1,5 +1,7 @@
 package org.kllbff.magic.math;
 
+import static org.kllbff.magic.math.DigitsRounder.round;
+
 /**
  * Provides methods to calculating some fixed values with relatively low accuracy:
  * <ul>
@@ -15,7 +17,7 @@ package org.kllbff.magic.math;
  *     <li>&#8730;3 - square root from 3;</li>
  * </ul> 
  * 
- * Accuracy of calculations fixed by value of {@link #MAX_DIGITS_COUNT}, as default it is {@value #MAX_DIGITS_COUNT}} 
+ * Accuracy of calculations fixed by value of {@link DigitsRounder#MAX_DIGITS_COUNT}, as default it is {@value DigitsRounder#MAX_DIGITS_COUNT}} 
  * 
  * @author Kirill Bogatikov
  * @version 1.0
@@ -26,32 +28,6 @@ public class PlanimetryValues {
                                PI4 = Math.PI / 4;
     public static final double SQRT_OF_TWO   = Math.sqrt(2),
                                SQRT_OF_THREE = Math.sqrt(3);
-    public static final int MAX_DIGITS_COUNT = 16;
-    
-    /**
-     * Returns a value, rounded to specified number of decimal digits
-     * <p>If specified digits count greater than {@value #MAX_DIGITS_COUNT}, returned initial value</p>
-     * <p>If specified digits count is negative number, returns {@link Double#NEGATIVE_INFINITY} value</p>
-     * 
-     * @param value initial value
-     * @param digits specified number of decimal digit
-     * @return value, rounded to specified number of decimal digits
-     */
-    public static double round(double value, int digits) {
-        if(digits >= MAX_DIGITS_COUNT) {
-            return value;
-        }
-        if(digits < 0) {
-            return Double.NEGATIVE_INFINITY;
-        }
-        if(digits == 0) {
-            return Math.round(value);                    
-        }
-        
-        double multiplexor = Math.pow(10, digits);
-        
-        return Math.round(value * multiplexor) / multiplexor;
-    }
     
     /**
      * Returns sinus of specified angle
@@ -89,7 +65,7 @@ public class PlanimetryValues {
             case 90: return 1;
             case 270: return -1;
             case 0: case 180: return 0;
-            default: return round(Math.cos(angle), 10);
+            default: return round(Math.sin(angle), 10);
         }
     }
 }

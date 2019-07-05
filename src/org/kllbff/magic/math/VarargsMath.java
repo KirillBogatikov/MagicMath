@@ -16,14 +16,15 @@ public final class VarargsMath {
      * @param numbers a varargs sequence of given numbers 
      * @return minimal value from sequence
      */
-    public static Number min(Number... numbers) {
+    @SuppressWarnings("unchecked")
+    public static <T extends Number> T min(T... numbers) {
         Number min = Double.MAX_VALUE;
         for(Number number : numbers) {
             if(number.doubleValue() < min.doubleValue()) {
                 min = number;
             }
         }
-        return min;
+        return (T)min;
     }
     
     /**
@@ -33,14 +34,15 @@ public final class VarargsMath {
      * @param numbers a varargs sequence of given numbers 
      * @return maximal value from sequence
      */
-    public static Number max(Number... numbers) {
+    @SuppressWarnings("unchecked")
+    public static <T extends Number> T max(T... numbers) {
         Number max = -Double.MAX_VALUE;
         for(Number number : numbers) {
             if(number.doubleValue() > max.doubleValue()) {
                 max = number;
             }
         }
-        return max;
+        return (T)max;
     }
     
     /**
